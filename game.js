@@ -65,12 +65,14 @@ function pickMixed(values, count, mode) {
 function makeRound(pool, mode) {
   const overlap = Math.max(boardSize * 2 - pool.length, 3 + Math.floor(Math.random() * 3));
   const common = pickMixed(pool, overlap, mode);
+  const commonWeight = 1.7 + Math.max(0, overlap - 5) * .57;
+  const childWeight = overlap === 9 ? 1.47 : 1.39;
   const unique = shuffled(pool.filter(value => !common.includes(value)));
   const sides = [0, 1].map(side => shuffled([
     ...common, ...unique.slice(side * (boardSize - overlap), (side + 1) * (boardSize - overlap))
   ]));
   const draws = [...new Set(sides.flat())].map(value => {
-    const weight = common.includes(value) ? 1.55 : sides[1].includes(value) ? 1.46 : 1;
+    const weight = common.includes(value) ? commonWeight : sides[1].includes(value) ? childWeight : 1;
     return { value, order: -Math.log(1 - Math.random()) / weight };
   }).sort((a,b) => a.order - b.order).map(entry => entry.value);
   return { sides, draws };
@@ -78,7 +80,7 @@ function makeRound(pool, mode) {
 
 const $ = id => document.getElementById(id);
 const dialog = $('dialog');
-const state = { players:[], remaining:[], history:[], current:null, interrupted:null, winner:null, chosen:null };
+const state = { players:[], remaining:[], history:[], current:null, interrupted:null, winner:null };
 let audioEnabled = true;
 let audio;
 let drag;
@@ -167,11 +169,6 @@ function hint(message) {
   $('hint').textContent = message;
 }
 
-function choose(player) {
-  state.chosen = player;
-  for (const entry of state.players) entry.token.setAttribute('aria-pressed', entry === player);
-}
-
 function refresh(player) {
   player.score.textContent = player.count + ' / ' + boardSize;
   player.token.replaceChildren(gem(player.colors[player.count % player.colors.length]));
@@ -181,7 +178,7 @@ function refresh(player) {
 function begin() {
   if ($('start').disabled) return;
   const round = makeRound(eligible(selection), selection.mode);
-  Object.assign(state, { remaining:round.draws, history:[], current:null, interrupted:null, winner:null, chosen:null });
+  Object.assign(state, { remaining:round.draws, history:[], current:null, interrupted:null, winner:null });
   $('boards').replaceChildren();
   state.players = round.sides.map((syllables, index) => {
     const name = ['Педагог','Ребёнок'][index];
@@ -196,20 +193,12 @@ function begin() {
     heading.append(title, score);
     const grid = document.createElement('div');
     grid.className = 'grid';
-    const token = button('', () => {
-      if (state.winner) return;
-      choose(state.chosen === player ? null : player);
-      if (state.current) hint('Выберите ячейку с выпавшим слогом.');
-    }, 'token');
-    token.setAttribute('aria-label', 'Взять камушек · ' + name);
-    token.setAttribute('aria-pressed', 'false');
+    const token = document.createElement('div');
+    token.className = 'token';
+    token.setAttribute('aria-hidden', 'true');
     const player = { name, board, score, grid, token, syllables, count:0, colors:shuffled([0,1,2,3,4,5,6,7,8]), closed:new Set() };
     for (const value of syllables) {
-      const cell = button('', () => {
-        if (state.winner) return;
-        if (state.chosen === player) place(player, cell);
-        else hint('Сначала возьмите камушек у своей карточки.');
-      }, 'cell');
+      const cell = button('', () => place(player, cell), 'cell');
       cell.dataset.value = value;
       const label = document.createElement('span');
       label.textContent = value;
@@ -256,7 +245,6 @@ function win(player) {
   state.winner = player;
   player.board.classList.add('winner');
   $('draw').disabled = $('undo').disabled = true;
-  for (const entry of state.players) entry.token.disabled = true;
   chime([523,659,784,1047]);
   setTimeout(() => {
     if (state.winner !== player) return;
@@ -268,11 +256,14 @@ function win(player) {
   }, 530);
 }
 
-function place(player, cell) {
+function place(player, cell, fromDrag = false) {
   if (state.winner || cell?.disabled) return false;
   const value = cell?.dataset.value;
   if (!state.current || value !== state.current) {
-    if (cell) animate(cell, 'wrong');
+    if (cell) {
+      animate(cell, 'wrong');
+      cell.addEventListener('animationend', () => cell.classList.remove('wrong'), { once:true });
+    }
     chime([247], .025);
     hint(state.current ? 'Камушек ждёт другой слог. Попробуйте ещё раз.' : 'Сначала достаньте слог из мешочка.');
     return false;
@@ -284,11 +275,22 @@ function place(player, cell) {
   cell.classList.add('covered');
   cell.setAttribute('aria-label', value + ' закрыт');
   cell.disabled = true;
-  cell.append(gem(stone));
-  choose(null);
-  refresh(player);
+  const placed = gem(stone);
   const bounds = cell.getBoundingClientRect();
-  particles(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2, 8, $('sparks'));
+  if (!fromDrag) {
+    const source = player.token.getBoundingClientRect();
+    placed.classList.add('from-tray');
+    placed.style.setProperty('--from-x', (source.x + source.width / 2 - bounds.x - bounds.width / 2) + 'px');
+    placed.style.setProperty('--from-y', (source.y + source.height / 2 - bounds.y - bounds.height / 2) + 'px');
+    placed.style.setProperty('--from-scale', source.width / Math.min(bounds.width, innerHeight * .11, 88));
+  }
+  cell.append(placed);
+  refresh(player);
+  placed.addEventListener('animationend', () => {
+    if (!placed.isConnected) return;
+    const landed = cell.getBoundingClientRect();
+    particles(landed.x + landed.width / 2, landed.y + landed.height / 2, 8, $('sparks'));
+  }, { once:true });
   chime([659,880]);
   hint('Камушек на месте!');
   if (player.count === boardSize) win(player);
@@ -310,7 +312,6 @@ function startDrag(event, player) {
       proxy = gem(player.colors[player.count % player.colors.length]);
       proxy.classList.add('dragging');
       document.body.append(proxy);
-      choose(player);
     }
     if (proxy) {
       proxy.style.left = next.clientX + 'px';
@@ -325,10 +326,8 @@ function startDrag(event, player) {
     token.removeEventListener('pointercancel', finish);
     token.removeEventListener('lostpointercapture', finish);
     if (!proxy) return;
-    token.addEventListener('click', stopClick, { capture:true, once:true });
-    setTimeout(() => token.removeEventListener('click', stopClick, true), 0);
     const target = next.type === 'pointerup' && document.elementFromPoint(next.clientX, next.clientY)?.closest('.cell');
-    if (target && player.grid.contains(target) && place(player, target)) {
+    if (target && player.grid.contains(target) && place(player, target, true)) {
       proxy.remove();
       return;
     }
@@ -340,7 +339,6 @@ function startDrag(event, player) {
     proxy.style.opacity = '0';
     setTimeout(() => proxy.remove(), 230);
   }
-  function stopClick(click) { click.stopImmediatePropagation(); }
   token.addEventListener('pointermove', move);
   token.addEventListener('pointerup', finish);
   token.addEventListener('pointercancel', finish);
@@ -367,7 +365,6 @@ function advance() {
     ]);
     return;
   }
-  choose(null);
   showCurrent();
   hint('Найдите слог, прочитайте его и закройте камушком.');
 }
@@ -400,7 +397,6 @@ $('undo').onclick = () => {
     state.current = value;
     showCurrent();
   }
-  choose(player);
   hint('Ход отменён. Можно снова закрыть этот слог.');
 };
 
