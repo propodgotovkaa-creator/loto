@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#261929">
+<title>Волшебное слоговое лото</title>
+<link rel="stylesheet" href="style.css">
+<script src="game.js" defer></script>
+</head>
+<body>
+<div class="shell">
+<header>
+  <span class="wordmark"><span aria-hidden="true">✦</span> Слоговое лото</span>
+  <div class="tools">
+    <button id="sound" class="quiet" aria-pressed="true">Звук вкл.</button>
+    <button id="fullscreen" class="quiet">На весь экран</button>
+  </div>
+</header>
+<main>
+  <section id="intro" class="intro">
+    <div class="intro-copy">
+      <div class="ornament" aria-hidden="true">✧ ── ✦ ── ✧</div>
+      <h1 tabindex="-1">Волшебное<br>слоговое лото</h1>
+      <p>Доставайте слоги из мешочка, читайте вслух и закрывайте их самоцветами.</p>
+      <button class="primary" id="play">Играть <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="cover" aria-hidden="true"></div>
+  </section>
+  <section id="setup" class="setup" hidden>
+    <button class="quiet back" id="back">← На главную</button>
+    <h1 tabindex="-1">Настройка партии</h1>
+    <fieldset><legend>Тип слогов</legend><div id="modes" class="choices"></div></fieldset>
+    <fieldset><legend>Согласные <small>от 4 букв</small></legend><div id="consonants" class="choices"></div></fieldset>
+    <fieldset><legend>Гласные <small>от 4 букв</small></legend><div id="vowels" class="choices"></div></fieldset>
+    <div class="setup-footer">
+      <p id="validation" role="status"></p>
+      <button id="start" class="primary">Начать игру <span aria-hidden="true">→</span></button>
+    </div>
+  </section>
+  <section id="game" class="game" aria-label="Игровое поле" hidden>
+    <div class="draw">
+      <div class="bag" aria-hidden="true"></div>
+      <output id="current" aria-live="polite" aria-label="Выпавший слог">?</output>
+    </div>
+    <div id="boards" class="boards"></div>
+    <p id="hint" class="hint" role="status"></p>
+    <div class="controls">
+      <button id="restart" class="quiet">Новая игра</button>
+      <button id="draw" class="primary">Достать слог</button>
+      <button id="undo" class="quiet" disabled>Отменить</button>
+    </div>
+  </section>
+</main>
+</div>
+<dialog id="dialog" aria-labelledby="dialog-title">
+  <div class="ornament" aria-hidden="true">✧ ── ✦ ── ✧</div>
+  <h2 id="dialog-title"></h2>
+  <p id="dialog-detail"></p>
+  <div id="dialog-actions"></div>
+</dialog>
+<div id="sparks" aria-hidden="true"></div>
+</body>
+</html>
