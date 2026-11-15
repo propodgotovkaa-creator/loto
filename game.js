@@ -490,16 +490,3 @@ $('sound').onclick = () => {
   chime([523,659]);
 };
 
-const fullscreen = $('fullscreen');
-fullscreen.hidden = !document.fullscreenEnabled || !document.documentElement.requestFullscreen;
-fullscreen.onclick = async () => {
-  try {
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else await document.documentElement.requestFullscreen();
-  } catch {
-    fullscreen.textContent = 'Режим недоступен';
-  }
-};
-document.addEventListener('fullscreenchange', () => {
-  fullscreen.textContent = document.fullscreenElement ? 'Выйти из полного экрана' : 'На весь экран';
-});
