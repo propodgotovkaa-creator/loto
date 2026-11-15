@@ -7,35 +7,86 @@ const minimumPool = 15;
 
 // Учебный набор двухбуквенных слогов. Обратные сочетания перечислены отдельно.
 const openGroups = {
-  Б:'БА БО БУ БЫ БИ БЕ БЁ БЮ БЯ', В:'ВА ВО ВУ ВЫ ВИ ВЕ ВЁ ВЮ ВЯ',
-  Г:'ГА ГО ГУ ГИ ГЕ ГЁ ГЮ ГЯ', Д:'ДА ДО ДУ ДЫ ДИ ДЕ ДЁ ДЮ ДЯ',
-  Ж:'ЖА ЖО ЖУ ЖИ ЖЕ ЖЁ', З:'ЗА ЗО ЗУ ЗЫ ЗИ ЗЕ ЗЁ ЗЮ ЗЯ',
-  К:'КА КО КУ КИ КЕ КЁ КЮ КЯ', Л:'ЛА ЛО ЛУ ЛЫ ЛИ ЛЕ ЛЁ ЛЮ ЛЯ',
-  М:'МА МО МУ МЫ МИ МЕ МЁ МЮ МЯ', Н:'НА НО НУ НЫ НИ НЕ НЁ НЮ НЯ',
-  П:'ПА ПО ПУ ПЫ ПИ ПЕ ПЁ ПЮ ПЯ', Р:'РА РО РУ РЫ РИ РЕ РЁ РЮ РЯ',
-  С:'СА СО СУ СЫ СИ СЕ СЁ СЮ СЯ', Т:'ТА ТО ТУ ТЫ ТИ ТЕ ТЁ ТЮ ТЯ',
-  Ф:'ФА ФО ФУ ФЫ ФИ ФЕ ФЁ ФЮ ФЯ', Х:'ХА ХО ХУ ХИ ХЕ ХЁ ХЮ',
-  Ц:'ЦА ЦО ЦУ ЦИ ЦЫ ЦЕ', Ч:'ЧА ЧО ЧУ ЧИ ЧЕ ЧЁ',
-  Ш:'ША ШО ШУ ШИ ШЕ ШЁ', Щ:'ЩА ЩУ ЩИ ЩЕ ЩЁ'
+ Б:'БА БО БУ БЫ БИ БЕ БЁ БЮ БЯ', В:'ВА ВО ВУ ВЫ ВИ ВЕ ВЁ ВЮ ВЯ',
+ Г:'ГА ГО ГУ ГИ ГЕ ГЁ ГЮ ГЯ', Д:'ДА ДО ДУ ДЫ ДИ ДЕ ДЁ ДЮ ДЯ',
+ Ж:'ЖА ЖО ЖУ ЖИ ЖЕ ЖЁ', З:'ЗА ЗО ЗУ ЗЫ ЗИ ЗЕ ЗЁ ЗЮ ЗЯ',
+ К:'КА КО КУ КИ КЕ КЁ КЮ КЯ', Л:'ЛА ЛО ЛУ ЛЫ ЛИ ЛЕ ЛЁ ЛЮ ЛЯ',
+ М:'МА МО МУ МЫ МИ МЕ МЁ МЮ МЯ', Н:'НА НО НУ НЫ НИ НЕ НЁ НЮ НЯ',
+ П:'ПА ПО ПУ ПЫ ПИ ПЕ ПЁ ПЮ ПЯ', Р:'РА РО РУ РЫ РИ РЕ РЁ РЮ РЯ',
+ С:'СА СО СУ СЫ СИ СЕ СЁ СЮ СЯ', Т:'ТА ТО ТУ ТЫ ТИ ТЕ ТЁ ТЮ ТЯ',
+ Ф:'ФА ФО ФУ ФЫ ФИ ФЕ ФЁ ФЮ ФЯ', Х:'ХА ХО ХУ ХИ ХЕ ХЁ ХЮ',
+ Ц:'ЦА ЦО ЦУ ЦИ ЦЫ ЦЕ', Ч:'ЧА ЧО ЧУ ЧИ ЧЕ ЧЁ',
+ Ш:'ША ШО ШУ ШИ ШЕ ШЁ', Щ:'ЩА ЩУ ЩИ ЩЕ ЩЁ'
 };
 const reverseGroups = {
-  А:'АБ АВ АГ АД АЖ АЗ АК АЛ АМ АН АП АР АС АТ АФ АХ АЦ АЧ АШ АЩ',
-  О:'ОБ ОВ ОГ ОД ОЖ ОЗ ОК ОЛ ОМ ОН ОП ОР ОС ОТ ОФ ОХ ОЦ ОЧ ОШ ОЩ',
-  У:'УБ УВ УГ УД УЖ УЗ УК УЛ УМ УН УП УР УС УТ УФ УХ УЧ УШ УЩ',
-  Ы:'ЫБ ЫВ ЫГ ЫД ЫЖ ЫЗ ЫК ЫЛ ЫМ ЫН ЫП ЫР ЫС ЫТ ЫХ ЫШ',
-  И:'ИБ ИВ ИГ ИД ИЖ ИЗ ИК ИЛ ИМ ИН ИП ИР ИС ИТ ИФ ИХ ИЦ ИЧ ИШ ИЩ',
-  Э:'ЭБ ЭВ ЭД ЭК ЭЛ ЭМ ЭН ЭП ЭР ЭС ЭТ ЭФ ЭХ ЭШ',
-  Е:'ЕБ ЕВ ЕГ ЕД ЕЖ ЕЗ ЕК ЕЛ ЕМ ЕН ЕП ЕР ЕС ЕТ ЕФ ЕХ ЕЦ ЕЧ ЕШ ЕЩ',
-  Ё:'ЁЖ ЁК ЁЛ ЁМ ЁН ЁР ЁС ЁТ ЁЧ ЁШ',
-  Ю:'ЮБ ЮГ ЮД ЮЖ ЮЗ ЮК ЮЛ ЮМ ЮН ЮП ЮР ЮС ЮТ ЮХ ЮЧ ЮШ',
-  Я:'ЯБ ЯВ ЯГ ЯД ЯЖ ЯЗ ЯК ЯЛ ЯМ ЯН ЯП ЯР ЯС ЯТ ЯХ ЯЦ ЯЧ ЯШ ЯЩ'
+ А:'АБ АВ АГ АД АЖ АЗ АК АЛ АМ АН АП АР АС АТ АФ АХ АЦ АЧ АШ АЩ',
+ О:'ОБ ОВ ОГ ОД ОЖ ОЗ ОК ОЛ ОМ ОН ОП ОР ОС ОТ ОФ ОХ ОЦ ОЧ ОШ ОЩ',
+ У:'УБ УВ УГ УД УЖ УЗ УК УЛ УМ УН УП УР УС УТ УФ УХ УЧ УШ УЩ',
+ Ы:'ЫБ ЫВ ЫГ ЫД ЫЖ ЫЗ ЫК ЫЛ ЫМ ЫН ЫП ЫР ЫС ЫТ ЫХ ЫШ',
+ И:'ИБ ИВ ИГ ИД ИЖ ИЗ ИК ИЛ ИМ ИН ИП ИР ИС ИТ ИФ ИХ ИЦ ИЧ ИШ ИЩ',
+ Э:'ЭБ ЭВ ЭД ЭК ЭЛ ЭМ ЭН ЭП ЭР ЭС ЭТ ЭФ ЭХ ЭШ',
+ Е:'ЕБ ЕВ ЕГ ЕД ЕЖ ЕЗ ЕК ЕЛ ЕМ ЕН ЕП ЕР ЕС ЕТ ЕФ ЕХ ЕЦ ЕЧ ЕШ ЕЩ',
+ Ё:'ЁЖ ЁК ЁЛ ЁМ ЁН ЁР ЁС ЁТ ЁЧ ЁШ',
+ Ю:'ЮБ ЮГ ЮД ЮЖ ЮЗ ЮК ЮЛ ЮМ ЮН ЮП ЮР ЮС ЮТ ЮХ ЮЧ ЮШ',
+ Я:'ЯБ ЯВ ЯГ ЯД ЯЖ ЯЗ ЯК ЯЛ ЯМ ЯН ЯП ЯР ЯС ЯТ ЯХ ЯЦ ЯЧ ЯШ ЯЩ'
 };
 const catalog = {
-  open: Object.values(openGroups).join(' ').split(' '),
-  reverse: Object.values(reverseGroups).join(' ').split(' ')
+ open: Object.values(openGroups).join(' ').split(' '),
+ reverse: Object.values(reverseGroups).join(' ').split(' ')
 };
 const modes = { open:'Открытые', reverse:'Обратные', mixed:'Смешанные' };
 const selection = { mode:'open', consonants:new Set('ЛМРСТ'), vowels:new Set('АОУЫИ') };
+const secondRow = /[ЯЁЮЕИ]/;
+const automaticPools = {
+  covered: `
+    БАК БАЛ БАР БАС БОК БОР БУР БЫК ВАЛ ВОЛ ВОР ГАЗ ГАМ ГУЛ ДАР ДОМ
+    ДУБ ЖАР ЖУК ЗАЛ ЗОВ ЗУБ КОМ КОТ КУБ ЛАК ЛОМ ЛУК МАК МАЛ МАТ МЁД
+    МОЛ МОР МЫЛ МЫС НОС НУЛ ПАЗ ПАР ПОЛ ПОП ПУХ ПЫЛ РАК РОВ РОГ РОТ
+    САД САМ СОМ СОН СОК СУП СЫР СЫН ТАЗ ТАМ ТОМ ТУР ФОН ХОР ЦЕХ ЧАС
+    ЧУБ ШАГ ШАР ШОВ ШУМ ЩУР
+    БЕГ БИЛ БИС ВЕК ВЕС ВЁЛ ВИД ВЯЗ ГИД ДЕД ДЕЛ ДЫМ ЖИЛ ЖИР
+    ЗЕВ КИТ ЛЕВ ЛЁД ЛЁН ЛЁТ ЛИК ЛИС ЛЮК ЛЯП МЕЛ МЕЧ МИГ МИЛ
+    МИР МЯЛ МЯЧ НЁС НИЛ ПЕЛ ПЁК ПИР РЕЗ РЁВ РИМ РИС РЯД
+    СЕЛ СЕВ СИЛ СЯД ТЕН ТИК ТИП ТЮК ФЕН ЧЕК ЧИЖ
+    ЧИП ШЕФ ШЁЛ ШИЛ ШИП ЩИТ
+  `,
+  cluster: `
+    БРА БРО БРУ ВРА ВРО ВСТА ВХОД ГЛА ГЛО ГРА ГРО ГРУ ДВА ДВО ДРА ДРО
+    ЖГУ ЗВА ЗВО ЗЛА ЗЛО КВА КВО КЛА КЛО КЛУ КРА КРО КРУ МНО МРА НРА
+    ПЛА ПЛО ПЛУ ПРА ПРО ПРУ ПСА ПТА СВА СВО СКА СКО СКУ СЛА СЛО СЛУ
+    СМА СМО СМУ СНА СНО СПА СПО СРА СРО СТА СТО СТУ СХО ТВА ТВО ТРА
+    ТРО ТРУ ФЛА ФЛО ФРА ХВА ХВО ХЛА ХЛО ХРА ШКА ШКО ШЛА ШЛО ШПА ШТА
+    ШТО ШТУ
+    БРАТ БРАК ВРАЧ ВРАГ ГРАД ГРОМ ГРОТ ДВОР ДРОЗД ЖГУТ ЗВОН КВАС
+    КЛАД КЛАН КЛОП КЛУБ КРАБ КРАН КРОТ КРУГ ПЛАН ПЛАЩ ПЛОД ПЛОТ ПРУД
+    СВАТ СВОД СКАТ СКОТ СЛОГ СЛОН СМОГ СНОП СПОР СРОК СТАЖ СТАН СТОГ
+    СТОЛ СТОН СТУК СТУЛ ТРАП ТРОН ТРУД ТРУС ФЛАГ ФЛОТ ХВАТ ХРАМ ШКАФ
+    ШЛАК ШРАМ ШТАБ ШТОК ШТУРМ БАНК БАНТ БОРТ ВОЛК ВОСК
+    ГОНГ ГОРН ДОЛГ ЗАЛП ЗОНТ КАНТ КАРП КЛЫК КОКС
+    КОРЖ КОРМ КОРТ КРЫМ КРЫС КУБК КУРС КУСТ ЛАНЧ
+    ЛОРД МАРШ МОРЖ МОРС МОСТ ПАРК ПЛОСК ПОЛК
+    ПОЛЗ ПОРТ ПОСТ РАНГ РОСТ ТАКТ ТАНК ТАНЦ ТАРТ ТОРТ
+    ТРАКТ ТРАСТ ТРОСТ ФАКТ ФАРС ФАРШ ФОНД ФОРТ ХОЛМ
+    БЛЕ БЛЁ БЛИ БЛЮ БРЕ БРЁ БРИ ВДЕ ВДЁ ВЕРХ ВЗЯ ВКЛЮ ВЛЕ ВЛИ
+    ВМЕ ВНЕ ВНИ ВПЕР ВРЕ ВРЁ ВРИ ВСТРЕ ГЛЕ ГЛЁ ГЛИ ГЛЮ ГЛЯ ГРЕ
+    ГРЁ ГРИ ГРЯ ДВЕ ДВИ ДЛИ ДЛЯ ДРЕ ДРЁ ДРИ ЗВЕ ЗВЁ ЗДЕ ЗЛЕ ЗЛИ
+    КЛЕ КЛЁ КЛИ КЛЮ КЛЯ КРЕ КРИ КРЮ МЛЕ МНИ МНЁ МНЕ ПЛЕ ПЛЁ ПЛИ
+    ПЛЮ ПЛЯ ПРЕ ПРИ ПРЯ СВЕ СВЁ СВИ СКИ СЛЕ СЛЁ СЛИ СМЕ СМЁ СНИ
+    СНЁ СПЕ СПИ СПЛЮ СРЕ СТЕ СТЁ СТИ СТРЕ СТРЁ СТРИ СТРЯ ТВЕР ТРЕ
+    ТРЁ ТРИ ТРЮ ФЛЕ ФРИ ХЛЕ ХЛЁ ХРЕ ХРИ ЦВЕ ЦВЁ ШЛИ ШЛЮ ШЛЯ ШТЕ
+    БЛЕСК БЛИН БРИЗ ВЕРФЬ ВЕСТ ВИНТ ВКЛЮЧ ВНЕС ВНЁС ВПРЯГ ВРЕД
+    ГЛЕБ ГЛЯНЬ ГРЕХ ГРИБ ГРИМ ДВЕРЬ ДРЕЙФ ЗВЕРЬ ЗДЕСЬ
+    ЗМЕЙ КЛЁН КЛЕЙ КЛЕРК КЛИН КЛИЧ КЛЮВ КЛЮЧ КЛЯП КРЕМ КРЕСТ
+    КРИК КРЮК ЛЕНТ ЛИСТ ЛИФТ ПЛЕД ПЛЕН ПЛЮС ПЛЮЩ ПРЕСС
+    СВЕРХ СКЕТЧ СКИТ СЛЕД СЛЁТ СМЕХ СНЕГ СНИЗ СПЕХ СТЕНД СТЕПЬ
+    СТИЛЬ СТИХ ТЕКСТ ТЕМП ТЕСТ ТИГР ТРЕК ТРЕНД ТРЕСК ТРЁП
+    ТРЮК ХЛЕБ ХЛЁСТ ХРЕН ХРИП ЦВЕТ ЦЕНТР ШЛЕМ ШЛЁП ШЛЮЗ ШРИФТ
+  `
+};
+
+function automaticPool({ mode, includeSecondRow }) {
+  return automaticPools[mode].trim().split(/\s+/).filter(value => includeSecondRow || !secondRow.test(value));
+}
 
 function eligible({ mode, consonants: chosenConsonants, vowels: chosenVowels }) {
   const open = catalog.open.filter(([c,v]) => chosenConsonants.has(c) && chosenVowels.has(v));
@@ -53,18 +104,17 @@ function shuffled(values) {
   return result;
 }
 
-function pickMixed(values, count, mode) {
-  const pool = shuffled(values);
-  if (mode !== 'mixed' || count < 2) return pool.slice(0, count);
-  const open = pool.find(value => consonants.includes(value[0]));
-  const reverse = pool.find(value => vowels.includes(value[0]));
-  if (!open || !reverse) return pool.slice(0, count);
-  return [open, reverse, ...pool.filter(value => value !== open && value !== reverse).slice(0, count - 2)];
+function pickCommon(pool, count, groupBy) {
+  const values = shuffled(pool);
+  if (!groupBy) return values.slice(0, count);
+  const first = values.find(value => groupBy(value));
+  const second = values.find(value => !groupBy(value));
+  return [first, second, ...values.filter(value => value !== first && value !== second).slice(0, count - 2)];
 }
 
-function makeRound(pool, mode) {
+function makeRound(pool, groupBy) {
   const overlap = Math.max(boardSize * 2 - pool.length, 3 + Math.floor(Math.random() * 3));
-  const common = pickMixed(pool, overlap, mode);
+  const common = pickCommon(pool, overlap, groupBy);
   const commonWeight = 1.7 + Math.max(0, overlap - 5) * .57;
   const childWeight = overlap === 9 ? 1.47 : 1.39;
   const unique = shuffled(pool.filter(value => !common.includes(value)));
@@ -80,10 +130,14 @@ function makeRound(pool, mode) {
 
 const $ = id => document.getElementById(id);
 const dialog = $('dialog');
-const state = { players:[], remaining:[], history:[], current:null, interrupted:null, winner:null };
+const state = {
+  players:[], remaining:[], repeats:new Map(), history:[],
+  current:null, interrupted:null, winner:null, turn:0, nextTimer:null
+};
 let audioEnabled = true;
 let audio;
 let drag;
+let activeAutomatic = null;
 
 function button(label, action, className) {
   const node = document.createElement('button');
@@ -176,9 +230,18 @@ function refresh(player) {
 }
 
 function begin() {
-  if ($('start').disabled) return;
-  const round = makeRound(eligible(selection), selection.mode);
-  Object.assign(state, { remaining:round.draws, history:[], current:null, interrupted:null, winner:null });
+  if (!activeAutomatic && $('start').disabled) return;
+  clearTimeout(state.nextTimer);
+  const pool = activeAutomatic ? automaticPool(activeAutomatic) : eligible(selection);
+  const groupBy = activeAutomatic
+    ? (activeAutomatic.includeSecondRow ? value => secondRow.test(value) : null)
+    : (selection.mode === 'mixed' ? value => consonants.includes(value[0]) : null);
+  const round = makeRound(pool, groupBy);
+  $('game').classList.toggle('long-syllables', Boolean(activeAutomatic));
+  Object.assign(state, {
+    remaining:round.draws, repeats:new Map(), history:[],
+    current:null, interrupted:null, winner:null, turn:0, nextTimer:null
+  });
   $('boards').replaceChildren();
   state.players = round.sides.map((syllables, index) => {
     const name = ['Педагог','Ребёнок'][index];
@@ -249,15 +312,15 @@ function win(player) {
   setTimeout(() => {
     if (state.winner !== player) return;
     if (dialog.open) dialog.close();
-    modal('ЛОТО! ПОБЕДА!', 'Победил ' + player.name.toLowerCase() + '!', [
-      ['Играть ещё', begin, 'primary'], ['Изменить буквы', () => screen('setup')]
+    modal('Победа', 'Победил ' + player.name.toLowerCase() + '!', [
+      ['Играть ещё', begin, 'primary'], ['К настройкам', () => screen('setup')]
     ]);
     particles(dialog.clientWidth / 2, dialog.clientHeight / 2, 30, dialog);
   }, 530);
 }
 
 function place(player, cell, fromDrag = false) {
-  if (state.winner || cell?.disabled) return false;
+  if (state.winner || state.nextTimer !== null || cell.disabled) return false;
   const value = cell?.dataset.value;
   if (!state.current || value !== state.current) {
     if (cell) {
@@ -292,8 +355,21 @@ function place(player, cell, fromDrag = false) {
     particles(landed.x + landed.width / 2, landed.y + landed.height / 2, 8, $('sparks'));
   }, { once:true });
   chime([659,880]);
-  hint('Камушек на месте!');
-  if (player.count === boardSize) win(player);
+  if (player.count === boardSize) {
+    win(player);
+  } else {
+    if (state.players.some(entry => entry.syllables.includes(value) && !entry.closed.has(value))) {
+      state.repeats.set(value, state.turn + 3);
+      hint('Слог закрыл ' + player.name.toLowerCase() + '. Позже он выпадет ещё раз.');
+    } else {
+      state.repeats.delete(value);
+      hint('Камушек на месте!');
+    }
+    state.nextTimer = setTimeout(() => {
+      state.nextTimer = null;
+      if (!$('game').hidden) advance();
+    }, 560);
+  }
   return true;
 }
 
@@ -347,35 +423,33 @@ function startDrag(event, player) {
 
 function showCurrent() {
   $('current').textContent = state.current;
-  $('draw').textContent = 'Следующий слог';
+  $('draw').textContent = 'Ход идёт';
+  $('draw').disabled = true;
 }
 
 function advance() {
+  let next;
   if (state.interrupted) {
-    state.current = state.interrupted;
+    next = state.interrupted;
     state.interrupted = null;
-  } else if (state.remaining.length) {
-    state.current = state.remaining.shift();
-    animate(document.querySelector('.bag'), 'shake');
-    animate($('current'), 'fly');
-    chime([330,494,659], .035);
   } else {
-    modal('Слоги закончились', 'В этой партии остались открытые ячейки.', [
-      ['Играть ещё', begin, 'primary'], ['Изменить буквы', () => screen('setup')], ['Вернуться']
-    ]);
-    return;
+    const ready = [...state.repeats].find(([value, turn]) =>
+      value !== state.current && (turn <= state.turn + 1 || !state.remaining.length)
+    );
+    next = ready?.[0] ?? state.remaining.shift() ?? state.repeats.keys().next().value;
   }
+  if (!next) return;
+  state.repeats.delete(next);
+  state.current = next;
+  state.turn++;
   showCurrent();
-  hint('Найдите слог, прочитайте его и закройте камушком.');
+  animate(document.querySelector('.bag'), 'shake');
+  animate($('current'), 'fly');
+  chime([330,494,659], .035);
+  hint('Кто первым найдёт слог? Нажмите на него и прочитайте вслух.');
 }
 
-$('draw').onclick = () => {
-  if (state.winner) return;
-  const incomplete = state.current && state.players.some(player => player.syllables.includes(state.current) && !player.closed.has(state.current));
-  if (incomplete) {
-    modal('Не все игроки закрыли этот слог. Продолжить?', '', [['Вернуться'], ['Продолжить', advance, 'primary']]);
-  } else advance();
-};
+$('draw').onclick = advance;
 
 $('undo').onclick = () => {
   const last = state.history.at(-1);
@@ -385,6 +459,9 @@ $('undo').onclick = () => {
     return;
   }
   const { player, cell, value } = state.history.pop();
+  clearTimeout(state.nextTimer);
+  state.nextTimer = null;
+  state.repeats.delete(value);
   player.closed.delete(value);
   player.count--;
   cell.disabled = false;
@@ -400,12 +477,21 @@ $('undo').onclick = () => {
   hint('Ход отменён. Можно снова закрыть этот слог.');
 };
 
-$('restart').onclick = () => modal('Новая игра', 'Начните с теми же буквами или измените набор слогов.', [
-  ['Играть ещё', begin, 'primary'], ['Изменить буквы', () => screen('setup')], ['Вернуться']
+$('restart').onclick = () => modal('Новая игра', 'Начните новую партию с теми же настройками или измените их.', [
+  ['Играть ещё', begin, 'primary'], ['К настройкам', () => screen('setup')], ['Вернуться']
 ]);
 $('play').onclick = () => screen('setup');
 $('back').onclick = () => screen('intro');
-$('start').onclick = begin;
+$('start').onclick = () => {
+  activeAutomatic = null;
+  begin();
+};
+for (const mode of Object.keys(automaticPools)) {
+  $('start-' + mode).onclick = () => {
+    activeAutomatic = { mode, includeSecondRow:$(mode + '-vowels').checked };
+    begin();
+  };
+}
 $('sound').onclick = () => {
   audioEnabled = !audioEnabled;
   $('sound').setAttribute('aria-pressed', audioEnabled);
