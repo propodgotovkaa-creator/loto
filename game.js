@@ -99,7 +99,8 @@ function makeRound(pool, groupBy) {
   const overlap = Math.max(boardSize * 2 - pool.length, 3 + Math.floor(Math.random() * 3));
   const common = pickCommon(pool, overlap, groupBy);
   const commonWeight = 1.7 + Math.max(0, overlap - 5) * .57;
-  const childWeight = overlap === 9 ? 1.47 : 1.39;
+  // With more shared cells, replays reduce the advantage of earlier child-only draws.
+  const childWeight = 1.46 + Math.max(0, overlap - 6) * .15;
   const unique = shuffled(pool.filter(value => !common.includes(value)));
   const sides = [0, 1].map(side => shuffled([
     ...common, ...unique.slice(side * (boardSize - overlap), (side + 1) * (boardSize - overlap))
